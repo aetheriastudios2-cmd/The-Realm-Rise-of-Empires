@@ -38,4 +38,6 @@ Pre-Production
 
 ## Community
 
-Discord: [Add your Discord invite]The-Realm-Rise-of-Empires
+Discord: [Add your Discord invite]The-Realm-Rise-of-## Community
+
+Discord: https://discord.gg/YOUR-LINK-HERE
