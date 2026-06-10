@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#0a0e1a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>The Realm: Rise of Empires</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ── Header ────────────────────────────────────────── -->
+    <header id="header">
+      <div id="kingdom-info">
+        <span id="kingdom-name-display">🏰 Aurelia</span>
+        <div id="level-badge">Lv <span id="kingdom-level">1</span></div>
+      </div>
+      <div id="xp-bar-wrap">
+        <div id="xp-bar-fill"></div>
+        <span id="xp-text">0 / 100 XP</span>
+      </div>
+    </header>
+
+    <!-- ── Resource Bar ───────────────────────────────────── -->
+    <div id="resource-bar">
+      <div class="res-item" title="Gold">
+        <span class="res-icon">💰</span>
+        <div class="res-vals">
+          <span class="res-num" id="r-gold">500</span>
+          <span class="res-rate" id="rr-gold">+0/s</span>
+        </div>
+      </div>
+      <div class="res-item" title="Food">
+        <span class="res-icon">🌾</span>
+        <div class="res-vals">
+          <span class="res-num" id="r-food">200</span>
+          <span class="res-rate" id="rr-food">+0/s</span>
+        </div>
+      </div>
+      <div class="res-item" title="Crystals">
+        <span class="res-icon">💎</span>
+        <div class="res-vals">
+          <span class="res-num" id="r-crystals">50</span>
+          <span class="res-rate" id="rr-crystals">+0/s</span>
+        </div>
+      </div>
+      <div class="res-item" title="Mana">
+        <span class="res-icon">⚡</span>
+        <div class="res-vals">
+          <span class="res-num" id="r-mana">20</span>
+          <span class="res-rate" id="rr-mana">+0/s</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Main Content ───────────────────────────────────── -->
+    <main id="main-content">
+
+      <!-- Kingdom Tab -->
+      <div id="tab-kingdom" class="tab-pane active">
+        <div class="tab-scroll">
+          <div id="castle-card">
+            <div id="castle-visual">🏰</div>
+            <div id="castle-details">
+              <div class="castle-name">Castle of Aurelia</div>
+              <div class="castle-meta">
+                Level <span id="castle-level-display">1</span>
+                &nbsp;·&nbsp;
+                Slots <span id="slots-used">0</span>/<span id="slots-max">4</span>
+              </div>
+            </div>
+            <button id="upgrade-castle-btn" class="btn-gold" onclick="openCastleUpgrade()">⬆ Upgrade</button>
+          </div>
+
+          <div class="section-header">
+            <span>Buildings</span>
+            <button id="build-btn" class="btn-small" onclick="openBuildMenu()">+ Build</button>
+          </div>
+          <div id="buildings-grid"><!-- populated by JS --></div>
+
+          <div class="section-header" style="margin-top:14px">
+            <span>Troops</span>
+          </div>
+          <div id="troops-panel"><!-- populated by JS --></div>
+        </div>
+      </div>
+
+      <!-- Titans Tab -->
+      <div id="tab-titans" class="tab-pane">
+        <div class="tab-scroll">
+          <div class="section-header">
+            <span>Battle Team</span>
+            <span class="hint-text">Tap a titan to assign</span>
+          </div>
+          <div id="battle-team-slots">
+            <div class="team-slot empty" data-slot="0"><span class="slot-label">Slot 1</span></div>
+            <div class="team-slot empty" data-slot="1"><span class="slot-label">Slot 2</span></div>
+            <div class="team-slot empty" data-slot="2"><span class="slot-label">Slot 3</span></div>
+          </div>
+
+          <div class="section-header" style="margin-top:14px">
+            <span>Collection (<span id="titan-count">0</span>)</span>
+            <button class="btn-small btn-purple" onclick="openSummonMenu()">✦ Summon</button>
+          </div>
+          <div id="titans-grid"><!-- populated by JS --></div>
+        </div>
+      </div>
+
+      <!-- Battle Tab -->
+      <div id="tab-battle" class="tab-pane">
+        <div class="tab-scroll">
+          <div id="power-banner">
+            <span class="power-label">Your Power</span>
+            <span id="player-power-num" class="power-num">0</span>
+          </div>
+          <div class="section-header">
+            <span>Enemy Kingdoms</span>
+          </div>
+          <div id="enemies-list"><!-- populated by JS --></div>
+        </div>
+      </div>
+
+      <!-- Research Tab -->
+      <div id="tab-research" class="tab-pane">
+        <div class="tab-scroll">
+          <p class="tab-intro">Research permanent upgrades for your empire</p>
+          <div id="research-grid"><!-- populated by JS --></div>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- ── Bottom Navigation ──────────────────────────────── -->
+    <nav id="bottom-nav">
+      <button class="nav-btn active" data-tab="kingdom" onclick="switchTab('kingdom')">
+        <span class="nav-icon">🏰</span>
+        <span class="nav-label">Kingdom</span>
+      </button>
+      <button class="nav-btn" data-tab="titans" onclick="switchTab('titans')">
+        <span class="nav-icon">🐉</span>
+        <span class="nav-label">Titans</span>
+      </button>
+      <button class="nav-btn" data-tab="battle" onclick="switchTab('battle')">
+        <span class="nav-icon">⚔️</span>
+        <span class="nav-label">Battle</span>
+      </button>
+      <button class="nav-btn" data-tab="research" onclick="switchTab('research')">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Research</span>
+      </button>
+    </nav>
+
+    <!-- ── Modal ──────────────────────────────────────────── -->
+    <div id="modal-overlay" class="hidden" onclick="handleOverlayClick(event)">
+      <div id="modal-box">
+        <div id="modal-header">
+          <h3 id="modal-title">Title</h3>
+          <button id="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div id="modal-body"><!-- dynamic --></div>
+        <div id="modal-footer"><!-- dynamic --></div>
+      </div>
+    </div>
+
+    <!-- ── Battle Screen ──────────────────────────────────── -->
+    <div id="battle-screen" class="hidden">
+      <div id="bs-header">
+        <h2 id="bs-title">⚔️ Battle</h2>
+      </div>
+      <div id="bs-arena">
+        <div class="bs-side" id="bs-player-side">
+          <div class="bs-side-label">Your Forces</div>
+          <div id="bs-player-titans"></div>
+        </div>
+        <div id="bs-vs">VS</div>
+        <div class="bs-side" id="bs-enemy-side">
+          <div class="bs-side-label" id="bs-enemy-name">Enemy</div>
+          <div id="bs-enemy-icon"></div>
+        </div>
+      </div>
+      <div id="bs-log-wrap">
+        <div id="bs-log"></div>
+      </div>
+      <div id="bs-result" class="hidden">
+        <div id="bs-result-title"></div>
+        <div id="bs-result-rewards"></div>
+        <button class="btn-gold" style="width:100%;margin-top:12px" onclick="closeBattleScreen()">Continue →</button>
+      </div>
+    </div>
+
+    <!-- ── Toast ──────────────────────────────────────────── -->
+    <div id="toast-container"></div>
+
+  </div><!-- #app -->
+
+  <script src="game.js"></script>
+</body>
+</html>
