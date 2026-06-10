@@ -1,0 +1,1417 @@
+/* ============================================================
+   THE REALM: RISE OF EMPIRES — game.js
+   Complete mobile strategy game
+   ============================================================ */
+
+// ============================================================
+// SECTION 1: STATIC DATA
+// ============================================================
+
+const TITAN_DATA = {
+  stone_golem: {
+    id: 'stone_golem', name: 'Stone Golem', icon: '🗿',
+    rarity: 'common', element: 'earth',
+    hp: 600, atk: 80, def: 120,
+    ability: 'Tremor',
+    abilityDesc: 'Slams the ground dealing 100% ATK to all enemies.',
+    summonCost: { gold: 100, crystals: 50 },
+    upgradeCost: { gold: 200, crystals: 80 },
+  },
+  forest_sprite: {
+    id: 'forest_sprite', name: 'Forest Sprite', icon: '🌿',
+    rarity: 'common', element: 'nature',
+    hp: 380, atk: 95, def: 60,
+    ability: 'Rejuvenate',
+    abilityDesc: 'Heals the most wounded ally for 180 HP.',
+    summonCost: { gold: 100, crystals: 50 },
+    upgradeCost: { gold: 200, crystals: 80 },
+  },
+  tide_serpent: {
+    id: 'tide_serpent', name: 'Tide Serpent', icon: '🐍',
+    rarity: 'common', element: 'water',
+    hp: 480, atk: 110, def: 80,
+    ability: 'Tidal Wave',
+    abilityDesc: 'Crashes a wave dealing 120% ATK to the enemy.',
+    summonCost: { gold: 100, crystals: 50 },
+    upgradeCost: { gold: 200, crystals: 80 },
+  },
+  flame_drake: {
+    id: 'flame_drake', name: 'Flame Drake', icon: '🔥',
+    rarity: 'rare', element: 'fire',
+    hp: 520, atk: 130, def: 70,
+    ability: 'Inferno Burst',
+    abilityDesc: 'Ignites the enemy for 150% ATK fire damage + burn.',
+    summonCost: { gold: 300, crystals: 150, mana: 50 },
+    upgradeCost: { gold: 500, crystals: 200, mana: 80 },
+  },
+  storm_hawk: {
+    id: 'storm_hawk', name: 'Storm Hawk', icon: '🦅',
+    rarity: 'rare', element: 'lightning',
+    hp: 460, atk: 145, def: 60,
+    ability: 'Thunder Strike',
+    abilityDesc: 'Deals 160% ATK lightning damage with 50% stun chance.',
+    summonCost: { gold: 300, crystals: 150, mana: 50 },
+    upgradeCost: { gold: 500, crystals: 200, mana: 80 },
+  },
+  shadow_walker: {
+    id: 'shadow_walker', name: 'Shadow Walker', icon: '🌑',
+    rarity: 'rare', element: 'dark',
+    hp: 500, atk: 140, def: 75,
+    ability: 'Shadowstep',
+    abilityDesc: 'Steps into the shadows, dodging the next hit and counter-attacking.',
+    summonCost: { gold: 300, crystals: 150, mana: 50 },
+    upgradeCost: { gold: 500, crystals: 200, mana: 80 },
+  },
+  emberwing: {
+    id: 'emberwing', name: 'Emberwing', icon: '🐉',
+    rarity: 'epic', element: 'fire',
+    hp: 740, atk: 180, def: 100,
+    ability: 'Dragon Breath',
+    abilityDesc: 'Breathes a river of flame dealing 200% ATK to all foes.',
+    summonCost: { gold: 800, crystals: 400, mana: 200 },
+    upgradeCost: { gold: 1200, crystals: 600, mana: 300 },
+  },
+  frost_giant: {
+    id: 'frost_giant', name: 'Frost Giant', icon: '❄️',
+    rarity: 'epic', element: 'ice',
+    hp: 880, atk: 148, def: 155,
+    ability: 'Blizzard',
+    abilityDesc: 'Summons a blizzard slowing all enemies and dealing 120% ATK.',
+    summonCost: { gold: 800, crystals: 400, mana: 200 },
+    upgradeCost: { gold: 1200, crystals: 600, mana: 300 },
+  },
+  storm_colossus: {
+    id: 'storm_colossus', name: 'Storm Colossus', icon: '⚡',
+    rarity: 'epic', element: 'lightning',
+    hp: 680, atk: 195, def: 110,
+    ability: 'Lightning Storm',
+    abilityDesc: 'Calls down chain lightning striking all enemies for 180% ATK.',
+    summonCost: { gold: 800, crystals: 400, mana: 200 },
+    upgradeCost: { gold: 1200, crystals: 600, mana: 300 },
+  },
+  ancient_dragon: {
+    id: 'ancient_dragon', name: 'Ancient Dragon', icon: '🔮',
+    rarity: 'legendary', element: 'fire',
+    hp: 1200, atk: 250, def: 180,
+    ability: 'Infernal Judgement',
+    abilityDesc: 'Unleashes cataclysmic fire dealing 300% ATK to all enemies.',
+    summonCost: { gold: 2000, crystals: 1000, mana: 500 },
+    upgradeCost: { gold: 3000, crystals: 1500, mana: 750 },
+  },
+  void_wraith: {
+    id: 'void_wraith', name: 'Void Wraith', icon: '💀',
+    rarity: 'legendary', element: 'dark',
+    hp: 800, atk: 275, def: 130,
+    ability: 'Soul Drain',
+    abilityDesc: 'Drains the life of all enemies, stealing 220% ATK as HP.',
+    summonCost: { gold: 2000, crystals: 1000, mana: 500 },
+    upgradeCost: { gold: 3000, crystals: 1500, mana: 750 },
+  },
+  solar_phoenix: {
+    id: 'solar_phoenix', name: 'Solar Phoenix', icon: '🌟',
+    rarity: 'legendary', element: 'light',
+    hp: 1000, atk: 220, def: 165,
+    ability: 'Rebirth',
+    abilityDesc: 'Upon first defeat, rises from the ashes with 40% HP restored.',
+    summonCost: { gold: 2000, crystals: 1000, mana: 500 },
+    upgradeCost: { gold: 3000, crystals: 1500, mana: 750 },
+  },
+};
+
+const BUILDING_DATA = {
+  gold_mine: {
+    id: 'gold_mine', name: 'Gold Mine', icon: '⛏️',
+    desc: 'Extracts gold from the earth.',
+    maxLevel: 5,
+    baseCost: { gold: 100 },
+    output: [0, 2, 5, 10, 18, 30],
+    outputType: 'gold',
+    outputLabel: 'gold/s',
+  },
+  farm: {
+    id: 'farm', name: 'Farm', icon: '🌾',
+    desc: 'Grows crops to feed your troops.',
+    maxLevel: 5,
+    baseCost: { gold: 80 },
+    output: [0, 1, 2.5, 5, 9, 15],
+    outputType: 'food',
+    outputLabel: 'food/s',
+  },
+  crystal_mine: {
+    id: 'crystal_mine', name: 'Crystal Mine', icon: '💎',
+    desc: 'Mines magical crystals from deep caverns.',
+    maxLevel: 5,
+    baseCost: { gold: 150, crystals: 30 },
+    output: [0, 0.5, 1.2, 2.5, 4.5, 8],
+    outputType: 'crystals',
+    outputLabel: 'crystals/s',
+  },
+  mana_spire: {
+    id: 'mana_spire', name: 'Mana Spire', icon: '🔮',
+    desc: 'Channels arcane energy from ley lines.',
+    maxLevel: 5,
+    baseCost: { gold: 100, mana: 50 },
+    output: [0, 0.3, 0.7, 1.5, 2.8, 5],
+    outputType: 'mana',
+    outputLabel: 'mana/s',
+  },
+  barracks: {
+    id: 'barracks', name: 'Barracks', icon: '⚔️',
+    desc: 'Trains soldiers. +50 max soldiers/level.',
+    maxLevel: 5,
+    baseCost: { gold: 200, food: 50 },
+    output: [],
+    outputType: 'troop_soldiers',
+    outputLabel: '+50 soldiers/lvl',
+  },
+  archery_range: {
+    id: 'archery_range', name: 'Archery Range', icon: '🏹',
+    desc: 'Trains archers. +30 max archers/level.',
+    maxLevel: 5,
+    baseCost: { gold: 200, food: 50 },
+    output: [],
+    outputType: 'troop_archers',
+    outputLabel: '+30 archers/lvl',
+  },
+  mage_tower: {
+    id: 'mage_tower', name: 'Mage Tower', icon: '🧙',
+    desc: 'Trains battle mages. +20 max mages/level.',
+    maxLevel: 5,
+    baseCost: { gold: 300, mana: 100 },
+    output: [],
+    outputType: 'troop_mages',
+    outputLabel: '+20 mages/lvl',
+  },
+  titan_sanctum: {
+    id: 'titan_sanctum', name: 'Titan Sanctum', icon: '🏛️',
+    desc: 'Binds titans. Required for rare/epic/legendary summons.',
+    maxLevel: 3,
+    baseCost: { gold: 500, crystals: 100, mana: 50 },
+    output: [],
+    outputType: 'titan_capacity',
+    outputLabel: 'Unlocks higher summons',
+  },
+  forge: {
+    id: 'forge', name: 'Forge', icon: '🔨',
+    desc: 'Empowers titans with ancient alloys. +10% titan stats/level.',
+    maxLevel: 5,
+    baseCost: { gold: 400, crystals: 100 },
+    output: [],
+    outputType: 'titan_boost',
+    outputLabel: '+10% titan stats/lvl',
+  },
+  watchtower: {
+    id: 'watchtower', name: 'Watchtower', icon: '🏗️',
+    desc: 'Boosts kingdom defense. +15% defense/level.',
+    maxLevel: 5,
+    baseCost: { gold: 250, food: 80 },
+    output: [],
+    outputType: 'defense',
+    outputLabel: '+15% defense/lvl',
+  },
+};
+
+const CASTLE_LEVELS = [
+  null,
+  { level: 1, slots: 4,  upgradeCost: { gold: 500, food: 200 } },
+  { level: 2, slots: 6,  upgradeCost: { gold: 1500, food: 500 } },
+  { level: 3, slots: 8,  upgradeCost: { gold: 3000, food: 1000, crystals: 500 } },
+  { level: 4, slots: 12, upgradeCost: { gold: 6000, food: 2000, crystals: 1000 } },
+  { level: 5, slots: 16, upgradeCost: null },
+];
+
+const RESOURCE_CAPS = (castleLevel) => ({
+  gold:     2000 + castleLevel * 1000,
+  food:     1000 + castleLevel * 500,
+  crystals: 500  + castleLevel * 250,
+  mana:     200  + castleLevel * 100,
+});
+
+const ENEMY_DATA = [
+  {
+    id: 'bandit_camp', name: 'Bandit Camp', icon: '⛺',
+    tier: 'easy', power: 200,
+    desc: 'A disorganised band of outlaws',
+    rewards: { gold: 220, food: 110 },
+    loot: '💰220  🌾110',
+    xp: 40,
+  },
+  {
+    id: 'goblin_tribe', name: 'Goblin Tribe', icon: '👺',
+    tier: 'easy', power: 380,
+    desc: 'Sneaky goblins guarding a stolen hoard',
+    rewards: { gold: 380, food: 160, crystals: 30 },
+    loot: '💰380  🌾160  💎30',
+    xp: 70,
+  },
+  {
+    id: 'forest_raiders', name: 'Forest Raiders', icon: '🌲',
+    tier: 'easy', power: 600,
+    desc: 'Rogue rangers ambushing travellers',
+    rewards: { gold: 580, food: 220, crystals: 50, mana: 15 },
+    loot: '💰580  🌾220  💎50  ⚡15',
+    xp: 100,
+  },
+  {
+    id: 'iron_keep', name: 'Iron Keep', icon: '🏯',
+    tier: 'medium', power: 900,
+    desc: 'A fortified garrison of mercenaries',
+    rewards: { gold: 900, food: 340, crystals: 90, mana: 30 },
+    loot: '💰900  🌾340  💎90  ⚡30',
+    xp: 160,
+  },
+  {
+    id: 'stone_fortress', name: 'Stone Fortress', icon: '🗼',
+    tier: 'medium', power: 1400,
+    desc: 'An ancient fortress with well-armed defenders',
+    rewards: { gold: 1400, food: 500, crystals: 160, mana: 55 },
+    loot: '💰1400  🌾500  💎160  ⚡55',
+    xp: 240,
+  },
+  {
+    id: 'ashborn_outpost', name: 'Ashborn Outpost', icon: '🌋',
+    tier: 'medium', power: 2000,
+    desc: 'A volcanic outpost of the Ashborn Empire',
+    rewards: { gold: 2000, food: 700, crystals: 250, mana: 90 },
+    loot: '💰2000  🌾700  💎250  ⚡90',
+    xp: 340,
+  },
+  {
+    id: 'shadowmere_bastion', name: "Shadowmere Bastion", icon: '🏰',
+    tier: 'hard', power: 3000,
+    desc: 'A shadowy fortress ruled by dark magic',
+    rewards: { gold: 3000, food: 800, crystals: 400, mana: 140 },
+    loot: '💰3000  🌾800  💎400  ⚡140',
+    xp: 500,
+  },
+  {
+    id: 'frostclan_stronghold', name: "Frostclan Stronghold", icon: '❄️',
+    tier: 'hard', power: 4500,
+    desc: 'The icy fortress of the savage Frostclans',
+    rewards: { gold: 4500, food: 1100, crystals: 600, mana: 220 },
+    loot: '💰4500  🌾1100  💎600  ⚡220',
+    xp: 700,
+  },
+  {
+    id: 'dragons_citadel', name: "Dragon's Citadel", icon: '🐲',
+    tier: 'hard', power: 7000,
+    desc: 'The legendary lair of an elder dragon',
+    rewards: { gold: 7000, food: 1500, crystals: 1000, mana: 400 },
+    loot: '💰7000  🌾1500  💎1000  ⚡400',
+    xp: 1200,
+  },
+];
+
+const RESEARCH_DATA = [
+  {
+    id: 'advanced_mining', name: 'Advanced Mining', icon: '⛏️',
+    desc: '+30% gold production from mines',
+    cost: { gold: 300, crystals: 100 },
+    type: 'gold_boost', value: 0.3,
+  },
+  {
+    id: 'irrigation', name: 'Irrigation', icon: '💧',
+    desc: '+30% food production from farms',
+    cost: { gold: 250, food: 100 },
+    type: 'food_boost', value: 0.3,
+  },
+  {
+    id: 'crystal_focus', name: 'Crystal Focus', icon: '✨',
+    desc: '+30% crystal production',
+    cost: { gold: 200, crystals: 200 },
+    type: 'crystal_boost', value: 0.3,
+  },
+  {
+    id: 'arcane_mastery', name: 'Arcane Mastery', icon: '🌌',
+    desc: '+30% mana production from spires',
+    cost: { gold: 150, mana: 150 },
+    type: 'mana_boost', value: 0.3,
+  },
+  {
+    id: 'battle_tactics', name: 'Battle Tactics', icon: '🗺️',
+    desc: '+25% troop attack power in battle',
+    cost: { gold: 400, food: 150 },
+    type: 'troop_atk', value: 0.25,
+  },
+  {
+    id: 'fortification', name: 'Fortification', icon: '🛡️',
+    desc: '+25% defense rating',
+    cost: { gold: 400, food: 100, crystals: 80 },
+    type: 'defense_boost', value: 0.25,
+  },
+  {
+    id: 'titan_bonding', name: 'Titan Bonding', icon: '🤝',
+    desc: '+20% all titan stats',
+    cost: { gold: 700, crystals: 300, mana: 150 },
+    type: 'titan_bonus', value: 0.2,
+  },
+  {
+    id: 'war_strategy', name: 'War Strategy', icon: '⚔️',
+    desc: '+25% battle rewards',
+    cost: { gold: 600, food: 250, crystals: 120 },
+    type: 'reward_bonus', value: 0.25,
+  },
+];
+
+const XP_TABLE = [0, 100, 250, 500, 900, 1500, 2300, 3400, 5000, 7200, 10000, 14000, 19000, 26000, 35000, 47000, 62000, 82000, 108000, 140000];
+
+// ============================================================
+// SECTION 2: GAME STATE
+// ============================================================
+
+let state;
+
+function defaultState() {
+  return {
+    resources: { gold: 500, food: 200, crystals: 50, mana: 20 },
+    castle: { level: 1 },
+    kingdom: { name: 'Aurelia', level: 1, xp: 0 },
+    buildings: [],   // { id, level }
+    titans: [        // start with stone golem
+      { id: 'stone_golem', stars: 1, teamSlot: -1 }
+    ],
+    troops: { soldiers: 50, archers: 20, mages: 0 },
+    research: {},    // researchId: true
+    stats: { battlesWon: 0, battlesLost: 0 },
+  };
+}
+
+// ============================================================
+// SECTION 3: SAVE / LOAD
+// ============================================================
+
+function saveGame() {
+  try {
+    localStorage.setItem('realm_save', JSON.stringify(state));
+  } catch (e) { /* storage full — ignore */ }
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem('realm_save');
+    if (raw) {
+      const loaded = JSON.parse(raw);
+      state = { ...defaultState(), ...loaded };
+      state.resources = { ...defaultState().resources, ...loaded.resources };
+      state.troops    = { ...defaultState().troops,    ...loaded.troops };
+      return true;
+    }
+  } catch (e) { /* corrupt save — ignore */ }
+  return false;
+}
+
+function resetGame() {
+  if (!confirm('Reset all progress and start over?')) return;
+  localStorage.removeItem('realm_save');
+  state = defaultState();
+  renderAll();
+  showToast('Kingdom reset. Start fresh!', 'info');
+}
+
+// ============================================================
+// SECTION 4: RESOURCE SYSTEM
+// ============================================================
+
+function getResourceRates() {
+  const rates = { gold: 0, food: 0, crystals: 0, mana: 0 };
+  const forgeLevel = getBuildingLevel('forge');
+  const forgeBonus = 1 + forgeLevel * 0.1;
+
+  for (const b of state.buildings) {
+    const def = BUILDING_DATA[b.id];
+    if (!def || !def.output.length) continue;
+    const raw = def.output[b.level] || 0;
+    if (def.outputType === 'gold')    rates.gold     += raw;
+    if (def.outputType === 'food')    rates.food     += raw;
+    if (def.outputType === 'crystals') rates.crystals += raw;
+    if (def.outputType === 'mana')    rates.mana     += raw;
+  }
+
+  // Research bonuses
+  if (state.research.advanced_mining) rates.gold     *= 1.3;
+  if (state.research.irrigation)      rates.food     *= 1.3;
+  if (state.research.crystal_focus)   rates.crystals *= 1.3;
+  if (state.research.arcane_mastery)  rates.mana     *= 1.3;
+
+  return rates;
+}
+
+function generateResources() {
+  const rates = getResourceRates();
+  const caps  = RESOURCE_CAPS(state.castle.level);
+  for (const key of Object.keys(state.resources)) {
+    state.resources[key] = Math.min(
+      state.resources[key] + (rates[key] || 0),
+      caps[key]
+    );
+  }
+}
+
+function canAfford(costs) {
+  for (const [k, v] of Object.entries(costs)) {
+    if ((state.resources[k] || 0) < v) return false;
+  }
+  return true;
+}
+
+function spendResources(costs) {
+  for (const [k, v] of Object.entries(costs)) {
+    state.resources[k] = (state.resources[k] || 0) - v;
+  }
+}
+
+function addResources(rewards) {
+  const caps = RESOURCE_CAPS(state.castle.level);
+  for (const [k, v] of Object.entries(rewards)) {
+    state.resources[k] = Math.min((state.resources[k] || 0) + v, caps[k]);
+  }
+}
+
+// ============================================================
+// SECTION 5: BUILDING SYSTEM
+// ============================================================
+
+function getBuildingLevel(id) {
+  const b = state.buildings.find(b => b.id === id);
+  return b ? b.level : 0;
+}
+
+function getMaxSlots() {
+  return CASTLE_LEVELS[state.castle.level].slots;
+}
+
+function getBuildingCost(buildingId, targetLevel) {
+  const def = BUILDING_DATA[buildingId];
+  const multiplier = Math.pow(2, targetLevel - 1);
+  const cost = {};
+  for (const [k, v] of Object.entries(def.baseCost)) {
+    cost[k] = Math.round(v * multiplier);
+  }
+  return cost;
+}
+
+function buildBuilding(buildingId) {
+  const maxSlots = getMaxSlots();
+  if (state.buildings.length >= maxSlots) {
+    showToast('No building slots! Upgrade your Castle.', 'error');
+    return;
+  }
+  if (state.buildings.find(b => b.id === buildingId)) {
+    showToast('Already built!', 'error');
+    return;
+  }
+  const cost = getBuildingCost(buildingId, 1);
+  if (!canAfford(cost)) {
+    showToast('Not enough resources!', 'error');
+    return;
+  }
+  spendResources(cost);
+  state.buildings.push({ id: buildingId, level: 1 });
+  saveGame();
+  closeModal();
+  renderAll();
+  showToast(`${BUILDING_DATA[buildingId].name} built!`, 'success');
+}
+
+function upgradeBuilding(buildingId) {
+  const b = state.buildings.find(b => b.id === buildingId);
+  if (!b) return;
+  const def = BUILDING_DATA[buildingId];
+  if (b.level >= def.maxLevel) {
+    showToast('Already at max level!', 'error');
+    return;
+  }
+  const cost = getBuildingCost(buildingId, b.level + 1);
+  if (!canAfford(cost)) {
+    showToast('Not enough resources!', 'error');
+    return;
+  }
+  spendResources(cost);
+  b.level++;
+  saveGame();
+  closeModal();
+  renderAll();
+  showToast(`${def.name} upgraded to level ${b.level}!`, 'success');
+}
+
+function demolishBuilding(buildingId) {
+  if (!confirm(`Demolish ${BUILDING_DATA[buildingId].name}?`)) return;
+  state.buildings = state.buildings.filter(b => b.id !== buildingId);
+  saveGame();
+  closeModal();
+  renderAll();
+  showToast('Building demolished.', 'info');
+}
+
+// ============================================================
+// SECTION 6: TITAN SYSTEM
+// ============================================================
+
+function getTitanEntry(id) {
+  return state.titans.find(t => t.id === id);
+}
+
+function getTitanPower(titanEntry) {
+  const def = TITAN_DATA[titanEntry.id];
+  const forgeBonus = 1 + getBuildingLevel('forge') * 0.1;
+  const researchBonus = state.research.titan_bonding ? 1.2 : 1;
+  const starMult = 1 + (titanEntry.stars - 1) * 0.2;
+  return Math.round((def.hp * 0.3 + def.atk * 2 + def.def) * forgeBonus * researchBonus * starMult);
+}
+
+function summonTitan(titanId) {
+  const def = TITAN_DATA[titanId];
+  if (getTitanEntry(titanId)) {
+    showToast('Titan already summoned!', 'error');
+    return;
+  }
+  // Sanctum requirement
+  const sanctumLevel = getBuildingLevel('titan_sanctum');
+  if (def.rarity === 'rare' && sanctumLevel < 1) {
+    showToast('Build a Titan Sanctum to summon Rare titans!', 'error');
+    return;
+  }
+  if (def.rarity === 'epic' && sanctumLevel < 2) {
+    showToast('Upgrade Titan Sanctum to level 2 for Epic titans!', 'error');
+    return;
+  }
+  if (def.rarity === 'legendary' && sanctumLevel < 3) {
+    showToast('Upgrade Titan Sanctum to level 3 for Legendary titans!', 'error');
+    return;
+  }
+  if (!canAfford(def.summonCost)) {
+    showToast('Not enough resources!', 'error');
+    return;
+  }
+  spendResources(def.summonCost);
+  state.titans.push({ id: titanId, stars: 1, teamSlot: -1 });
+  state.stats.titansCollected = (state.stats.titansCollected || 0) + 1;
+  saveGame();
+  closeModal();
+  renderAll();
+  showToast(`${def.name} joins your roster!`, 'success');
+}
+
+function upgradeTitan(titanId) {
+  const entry = getTitanEntry(titanId);
+  if (!entry || entry.stars >= 5) return;
+  const def = TITAN_DATA[titanId];
+  const cost = {
+    gold:     def.upgradeCost.gold     * entry.stars,
+    crystals: def.upgradeCost.crystals * entry.stars,
+  };
+  if (def.upgradeCost.mana) cost.mana = def.upgradeCost.mana * entry.stars;
+  if (!canAfford(cost)) {
+    showToast('Not enough resources!', 'error');
+    return;
+  }
+  spendResources(cost);
+  entry.stars++;
+  saveGame();
+  closeModal();
+  renderAll();
+  showToast(`${def.name} is now ★${entry.stars}!`, 'success');
+}
+
+function assignToTeam(titanId) {
+  const entry = getTitanEntry(titanId);
+  if (!entry) return;
+  // If already in team, remove
+  if (entry.teamSlot >= 0) {
+    entry.teamSlot = -1;
+    saveGame();
+    renderTitansTab();
+    return;
+  }
+  // Find free slot
+  const usedSlots = state.titans.filter(t => t.teamSlot >= 0).map(t => t.teamSlot);
+  const freeSlot = [0, 1, 2].find(s => !usedSlots.includes(s));
+  if (freeSlot === undefined) {
+    showToast('Battle team is full! Tap a titan to remove it.', 'error');
+    return;
+  }
+  entry.teamSlot = freeSlot;
+  saveGame();
+  renderTitansTab();
+}
+
+// ============================================================
+// SECTION 7: TROOP SYSTEM
+// ============================================================
+
+function getMaxTroops() {
+  const soldierBase = 50 + getBuildingLevel('barracks') * 50;
+  const archerBase  = 20 + getBuildingLevel('archery_range') * 30;
+  const mageBase    = 0  + getBuildingLevel('mage_tower') * 20;
+  return { soldiers: soldierBase, archers: archerBase, mages: mageBase };
+}
+
+function trainTroops(type) {
+  const max = getMaxTroops();
+  const cost = { soldiers: { gold: 20, food: 10 }, archers: { gold: 30, food: 8 }, mages: { gold: 40, mana: 20 } }[type];
+  const amount = 10;
+  if (state.troops[type] + amount > max[type]) {
+    showToast(`Barracks full! Upgrade to train more ${type}.`, 'error');
+    return;
+  }
+  const totalCost = {};
+  for (const [k, v] of Object.entries(cost)) totalCost[k] = v * amount;
+  if (!canAfford(totalCost)) {
+    showToast('Not enough resources!', 'error');
+    return;
+  }
+  spendResources(totalCost);
+  state.troops[type] += amount;
+  saveGame();
+  renderKingdomTab();
+  showToast(`+${amount} ${type} trained!`, 'success');
+}
+
+function getTroopPower() {
+  const base = state.troops.soldiers * 8 + state.troops.archers * 12 + state.troops.mages * 18;
+  const bonus = state.research.battle_tactics ? 1.25 : 1;
+  return Math.round(base * bonus);
+}
+
+// ============================================================
+// SECTION 8: KINGDOM PROGRESSION
+// ============================================================
+
+function getPlayerPower() {
+  const titanPower = state.titans
+    .filter(t => t.teamSlot >= 0)
+    .reduce((sum, t) => sum + getTitanPower(t), 0);
+  const defenseBonus = state.research.fortification ? 1.25 : 1;
+  const watchLevel = getBuildingLevel('watchtower');
+  const defMult = (1 + watchLevel * 0.15) * defenseBonus;
+  return Math.round((titanPower + getTroopPower()) * defMult);
+}
+
+function addXP(amount) {
+  state.kingdom.xp += amount;
+  const maxLevel = XP_TABLE.length - 1;
+  while (
+    state.kingdom.level < maxLevel &&
+    state.kingdom.xp >= XP_TABLE[state.kingdom.level]
+  ) {
+    state.kingdom.xp -= XP_TABLE[state.kingdom.level];
+    state.kingdom.level++;
+    showToast(`🎉 Kingdom reached Level ${state.kingdom.level}!`, 'success');
+  }
+}
+
+// ============================================================
+// SECTION 9: RESEARCH
+// ============================================================
+
+function doResearch(researchId) {
+  if (state.research[researchId]) {
+    showToast('Already researched!', 'info');
+    return;
+  }
+  const def = RESEARCH_DATA.find(r => r.id === researchId);
+  if (!def) return;
+  if (!canAfford(def.cost)) {
+    showToast('Not enough resources!', 'error');
+    return;
+  }
+  spendResources(def.cost);
+  state.research[researchId] = true;
+  saveGame();
+  renderAll();
+  showToast(`${def.name} researched!`, 'success');
+}
+
+// ============================================================
+// SECTION 10: CASTLE UPGRADE
+// ============================================================
+
+function openCastleUpgrade() {
+  const current = state.castle.level;
+  if (current >= 5) {
+    showToast('Castle is at max level!', 'info');
+    return;
+  }
+  const next = CASTLE_LEVELS[current + 1];
+  const cost = CASTLE_LEVELS[current].upgradeCost;
+  const canDo = canAfford(cost);
+  const costHtml = formatCostHtml(cost, true);
+  showModal(
+    '🏰 Upgrade Castle',
+    `<div class="modal-row"><span class="modal-label">Current Level</span><span class="modal-value">${current}</span></div>
+     <div class="modal-row"><span class="modal-label">Next Level</span><span class="modal-value">${current + 1}</span></div>
+     <div class="modal-row"><span class="modal-label">Building Slots</span><span class="modal-value">${CASTLE_LEVELS[current].slots} → ${next.slots}</span></div>
+     <div style="margin:10px 0"><div class="modal-label" style="margin-bottom:6px">Cost</div>${costHtml}</div>
+     <div class="upgrade-preview">🏰 Unlocks ${next.slots - CASTLE_LEVELS[current].slots} additional building slots</div>`,
+    [{
+      label: canDo ? '⬆ Upgrade Castle' : '❌ Need More Resources',
+      cls: 'btn-gold',
+      disabled: !canDo,
+      onclick: () => {
+        spendResources(cost);
+        state.castle.level++;
+        saveGame();
+        closeModal();
+        renderAll();
+        showToast(`Castle upgraded to Level ${state.castle.level}!`, 'success');
+      }
+    }]
+  );
+}
+
+// ============================================================
+// SECTION 11: BATTLE SYSTEM
+// ============================================================
+
+function getTeamTitans() {
+  return state.titans
+    .filter(t => t.teamSlot >= 0)
+    .sort((a, b) => a.teamSlot - b.teamSlot);
+}
+
+function startBattle(enemyId) {
+  const enemy = ENEMY_DATA.find(e => e.id === enemyId);
+  const team  = getTeamTitans();
+
+  if (team.length === 0) {
+    showToast('Assign at least 1 titan to your battle team!', 'error');
+    return;
+  }
+
+  const playerPower = getPlayerPower();
+  const rewardMult  = state.research.war_strategy ? 1.25 : 1;
+
+  // Show battle prep
+  showModal(
+    `⚔️ Attack ${enemy.name}`,
+    `<div class="modal-row"><span class="modal-label">Enemy Power</span><span class="modal-value" style="color:var(--red)">${enemy.power}</span></div>
+     <div class="modal-row"><span class="modal-label">Your Power</span><span class="modal-value" style="color:var(--green)">${playerPower}</span></div>
+     <div class="modal-row"><span class="modal-label">Win Chance</span><span class="modal-value">${calcWinChance(playerPower, enemy.power)}%</span></div>
+     <hr class="divider">
+     <div class="modal-label" style="margin-bottom:6px">Possible Rewards</div>
+     <div style="font-size:14px;color:var(--gold)">${enemy.loot}</div>
+     <div style="font-size:11px;color:var(--text-dim);margin-top:6px">+${enemy.xp} XP</div>`,
+    [{
+      label: '⚔️ Launch Attack!',
+      cls: 'btn-red',
+      onclick: () => {
+        closeModal();
+        runBattle(enemy, team, playerPower, rewardMult);
+      }
+    }]
+  );
+}
+
+function calcWinChance(playerPower, enemyPower) {
+  const raw = (playerPower / (playerPower + enemyPower)) * 100;
+  return Math.min(95, Math.max(5, Math.round(raw)));
+}
+
+function runBattle(enemy, team, playerPower, rewardMult) {
+  const winChance = calcWinChance(playerPower, enemy.power) / 100;
+  const roll = Math.random();
+  const won  = roll <= winChance;
+
+  // Build the battle log
+  const log = generateBattleLog(team, enemy, won);
+
+  // Show battle screen
+  const screen = document.getElementById('battle-screen');
+  screen.classList.remove('hidden');
+  document.getElementById('bs-title').textContent = `⚔️ ${enemy.name}`;
+  document.getElementById('bs-enemy-name').textContent = enemy.name;
+  document.getElementById('bs-enemy-icon').textContent = enemy.icon;
+
+  // Player titans row
+  const ptDiv = document.getElementById('bs-player-titans');
+  ptDiv.innerHTML = team.map(t => {
+    const def = TITAN_DATA[t.id];
+    return `<div style="text-align:center"><div style="font-size:28px">${def.icon}</div><div style="font-size:10px;color:var(--gold)">${def.name.split(' ')[0]}</div></div>`;
+  }).join('');
+
+  // Clear log
+  const logEl = document.getElementById('bs-log');
+  logEl.innerHTML = '';
+  document.getElementById('bs-result').classList.add('hidden');
+
+  // Animate log entries
+  let i = 0;
+  function nextEntry() {
+    if (i >= log.length) {
+      // Show result
+      const resultEl = document.getElementById('bs-result');
+      resultEl.classList.remove('hidden');
+      const titleEl = document.getElementById('bs-result-title');
+      const rewardsEl = document.getElementById('bs-result-rewards');
+
+      if (won) {
+        titleEl.textContent = '🏆 VICTORY!';
+        titleEl.style.color = 'var(--green)';
+        const rewards = {};
+        for (const [k, v] of Object.entries(enemy.rewards)) {
+          rewards[k] = Math.round(v * rewardMult);
+        }
+        addResources(rewards);
+        addXP(enemy.xp);
+        state.stats.battlesWon++;
+        const chips = Object.entries(rewards).map(([k, v]) => {
+          const icons = { gold:'💰', food:'🌾', crystals:'💎', mana:'⚡' };
+          return `<div class="reward-chip">${icons[k]} ${v}</div>`;
+        }).join('');
+        rewardsEl.innerHTML = chips;
+      } else {
+        titleEl.textContent = '💀 DEFEATED!';
+        titleEl.style.color = 'var(--red)';
+        rewardsEl.innerHTML = '<div style="font-size:12px;color:var(--text-dim)">Regroup and try again…</div>';
+        // Lose some troops
+        state.troops.soldiers = Math.max(0, state.troops.soldiers - Math.ceil(state.troops.soldiers * 0.15));
+        state.troops.archers  = Math.max(0, state.troops.archers  - Math.ceil(state.troops.archers  * 0.10));
+        state.stats.battlesLost++;
+      }
+      saveGame();
+      renderAll();
+      return;
+    }
+    const entry = log[i++];
+    const div = document.createElement('div');
+    div.className = `log-entry log-${entry.type}`;
+    div.textContent = entry.text;
+    logEl.appendChild(div);
+    logEl.scrollTop = logEl.scrollHeight;
+    setTimeout(nextEntry, entry.delay || 500);
+  }
+  nextEntry();
+}
+
+function generateBattleLog(team, enemy, won) {
+  const log = [];
+  const push = (text, type, delay) => log.push({ text, type, delay: delay || 550 });
+  const rand = (a, b) => Math.floor(Math.random() * (b - a + 1)) + a;
+
+  push(`Your forces advance on ${enemy.name}!`, 'system', 300);
+
+  // Opening salvos
+  for (const entry of team) {
+    const def = TITAN_DATA[entry.id];
+    const dmg = rand(Math.round(def.atk * 0.8 * entry.stars), Math.round(def.atk * 1.3 * entry.stars));
+    push(`${def.icon} ${def.name} strikes for ${dmg} damage!`, 'attack');
+  }
+
+  // Mid battle drama
+  const midEvents = [
+    'The enemy garrison rallies and pushes back!',
+    `${enemy.icon} Enemy archers volley — your soldiers take 45 damage!`,
+    'Your troops hold the line under heavy fire!',
+    'Enemy mages unleash a dark spell — dodge it!',
+  ];
+  push(midEvents[rand(0, midEvents.length - 1)], 'system');
+
+  // Ability triggers
+  const activatedTitan = team[rand(0, team.length - 1)];
+  const aDef = TITAN_DATA[activatedTitan.id];
+  push(`✦ ${aDef.name} activates ${aDef.ability}! ${aDef.abilityDesc}`, 'ability');
+
+  // Crit moment
+  if (Math.random() > 0.4) {
+    const cTitan = team[rand(0, team.length - 1)];
+    const cDef = TITAN_DATA[cTitan.id];
+    const critDmg = rand(Math.round(cDef.atk * 1.5), Math.round(cDef.atk * 2.2));
+    push(`💥 CRITICAL HIT! ${cDef.name} deals ${critDmg} critical damage!`, 'crit');
+  }
+
+  // Final push
+  if (won) {
+    const lasts = [
+      `${team[0] ? TITAN_DATA[team[0].id].icon : '⚔️'} Your titans break through the defenses!`,
+      'Enemy commander retreats — the battle is yours!',
+      'The final wave crumbles before your might!',
+    ];
+    push(lasts[rand(0, lasts.length - 1)], 'attack');
+    push(`🏆 Victory! ${enemy.name} has fallen!`, 'victory', 700);
+  } else {
+    const losses = [
+      'Enemy reinforcements arrive from the flanks!',
+      'Outnumbered and overwhelmed — your forces retreat!',
+      'The enemy is too strong — fall back and regroup!',
+    ];
+    push(losses[rand(0, losses.length - 1)], 'system');
+    push(`💀 Defeat. Your army retreats from ${enemy.name}.`, 'defeat', 700);
+  }
+
+  return log;
+}
+
+function closeBattleScreen() {
+  document.getElementById('battle-screen').classList.add('hidden');
+}
+
+// ============================================================
+// SECTION 12: MODAL SYSTEM
+// ============================================================
+
+function showModal(title, bodyHtml, actions) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = bodyHtml;
+  const footer = document.getElementById('modal-footer');
+  footer.innerHTML = '';
+  for (const a of (actions || [])) {
+    const btn = document.createElement('button');
+    btn.className = a.cls || 'btn-gold';
+    btn.textContent = a.label;
+    if (a.disabled) btn.disabled = true;
+    btn.onclick = a.onclick;
+    footer.appendChild(btn);
+  }
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.add('hidden');
+}
+
+function handleOverlayClick(e) {
+  if (e.target.id === 'modal-overlay') closeModal();
+}
+
+// ============================================================
+// SECTION 13: BUILD MENU
+// ============================================================
+
+function openBuildMenu() {
+  if (state.buildings.length >= getMaxSlots()) {
+    showToast('No building slots! Upgrade your Castle.', 'error');
+    return;
+  }
+  const opts = Object.values(BUILDING_DATA).map(def => {
+    const alreadyBuilt = state.buildings.find(b => b.id === def.id);
+    const cost = getBuildingCost(def.id, 1);
+    const costStr = formatCostStr(cost);
+    const cls = alreadyBuilt ? 'build-option already-built' : 'build-option';
+    return `<div class="${cls}" onclick="buildBuilding('${def.id}')">
+      <div class="build-opt-icon">${def.icon}</div>
+      <div class="build-opt-name">${def.name}</div>
+      <div class="build-opt-cost">${costStr}</div>
+    </div>`;
+  }).join('');
+  showModal(
+    '🔨 Construct Building',
+    `<p style="font-size:12px;color:var(--text-dim);margin-bottom:10px">Available slots: ${getMaxSlots() - state.buildings.length}</p>
+     <div class="build-option-grid">${opts}</div>`,
+    []
+  );
+}
+
+function openBuildingDetail(buildingId) {
+  const b = state.buildings.find(b => b.id === buildingId);
+  if (!b) return;
+  const def = BUILDING_DATA[buildingId];
+  const isMax = b.level >= def.maxLevel;
+  let detailHtml = `
+    <div style="text-align:center;font-size:36px;margin-bottom:8px">${def.icon}</div>
+    <div class="modal-row"><span class="modal-label">Level</span><span class="modal-value">${b.level} / ${def.maxLevel}${isMax ? ' (MAX)' : ''}</span></div>
+    <div class="modal-row"><span class="modal-label">Effect</span><span class="modal-value">${def.outputLabel}</span></div>`;
+
+  if (def.output.length && b.level > 0) {
+    detailHtml += `<div class="modal-row"><span class="modal-label">Output</span><span class="modal-value" style="color:var(--green)">${def.output[b.level]}/s</span></div>`;
+    if (!isMax) detailHtml += `<div class="upgrade-preview">▲ Upgrade → ${def.output[b.level + 1]}/s</div>`;
+  }
+
+  const actions = [];
+  if (!isMax) {
+    const cost = getBuildingCost(buildingId, b.level + 1);
+    const canDo = canAfford(cost);
+    detailHtml += `<div style="margin-top:10px"><div class="modal-label" style="margin-bottom:6px">Upgrade Cost</div>${formatCostHtml(cost, true)}</div>`;
+    actions.push({
+      label: canDo ? `⬆ Upgrade to Lv ${b.level + 1}` : '❌ Need More Resources',
+      cls: 'btn-gold', disabled: !canDo,
+      onclick: () => upgradeBuilding(buildingId),
+    });
+  }
+  actions.push({
+    label: '🗑 Demolish',
+    cls: 'btn-red',
+    onclick: () => demolishBuilding(buildingId),
+  });
+
+  showModal(`${def.icon} ${def.name}`, detailHtml, actions);
+}
+
+// ============================================================
+// SECTION 14: SUMMON MENU
+// ============================================================
+
+function openSummonMenu() {
+  const options = Object.values(TITAN_DATA).map(def => {
+    const owned = !!getTitanEntry(def.id);
+    const sanctumLevel = getBuildingLevel('titan_sanctum');
+    const locked = (def.rarity === 'rare' && sanctumLevel < 1) ||
+                   (def.rarity === 'epic' && sanctumLevel < 2) ||
+                   (def.rarity === 'legendary' && sanctumLevel < 3);
+    const costStr = formatCostStr(def.summonCost);
+    const cls = owned ? 'summon-option owned' : locked ? 'summon-option locked' : 'summon-option';
+    const lockNote = locked ? `<div style="font-size:10px;color:var(--red)">🔒 Sanctum Lv ${def.rarity === 'rare' ? 1 : def.rarity === 'epic' ? 2 : 3} required</div>` : '';
+    return `<div class="${cls}" onclick="${owned || locked ? '' : `summonTitan('${def.id}')`}">
+      <div class="summon-icon">${def.icon}</div>
+      <div class="summon-name">${def.name}</div>
+      <div class="summon-rarity-badge rarity-${def.rarity}">${def.rarity}</div>
+      ${owned ? '<div style="font-size:10px;color:var(--green)">✓ Owned</div>' : lockNote || `<div class="summon-cost">${costStr}</div>`}
+    </div>`;
+  }).join('');
+
+  const sanctumLevel = getBuildingLevel('titan_sanctum');
+  const note = sanctumLevel === 0
+    ? '<p style="font-size:11px;color:var(--text-dim);margin-bottom:10px">⚠ Build a Titan Sanctum to unlock Rare, Epic, and Legendary titans.</p>'
+    : '';
+  showModal('✦ Summon Titan', note + `<div class="summon-grid">${options}</div>`, []);
+}
+
+function openTitanDetail(titanId) {
+  const entry = getTitanEntry(titanId);
+  if (!entry) return;
+  const def = TITAN_DATA[titanId];
+  const forgeBonus = 1 + getBuildingLevel('forge') * 0.1;
+  const resBonus   = state.research.titan_bonding ? 1.2 : 1;
+  const starMult   = 1 + (entry.stars - 1) * 0.2;
+  const effHp  = Math.round(def.hp  * forgeBonus * resBonus * starMult);
+  const effAtk = Math.round(def.atk * forgeBonus * resBonus * starMult);
+  const effDef = Math.round(def.def * forgeBonus * resBonus * starMult);
+  const maxStat = 1500;
+
+  const starsStr = '★'.repeat(entry.stars) + '☆'.repeat(5 - entry.stars);
+  const inTeam   = entry.teamSlot >= 0;
+
+  const upgradeInfo = entry.stars < 5 ? (() => {
+    const uc = { gold: def.upgradeCost.gold * entry.stars, crystals: def.upgradeCost.crystals * entry.stars };
+    if (def.upgradeCost.mana) uc.mana = def.upgradeCost.mana * entry.stars;
+    const canUpgrade = canAfford(uc);
+    return { html: `<div style="margin:10px 0"><div class="modal-label" style="margin-bottom:5px">Upgrade to ★${entry.stars + 1}</div>${formatCostHtml(uc, true)}</div>`, canUpgrade, cost: uc };
+  })() : null;
+
+  const bodyHtml = `
+    <div class="titan-modal-header">
+      <div class="titan-modal-icon">${def.icon}</div>
+      <div>
+        <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold)">${def.name}</div>
+        <div class="summon-rarity-badge rarity-${def.rarity}" style="margin:4px 0">${def.rarity}</div>
+        <div style="font-size:14px;color:var(--gold)">${starsStr}</div>
+      </div>
+    </div>
+    <div class="stat-bars">
+      <div class="stat-bar-row">
+        <span class="stat-bar-label">HP</span>
+        <div class="stat-bar-track"><div class="stat-bar-fill bar-hp" style="width:${Math.min(100,effHp/maxStat*100)}%"></div></div>
+        <span class="stat-bar-val">${effHp}</span>
+      </div>
+      <div class="stat-bar-row">
+        <span class="stat-bar-label">ATK</span>
+        <div class="stat-bar-track"><div class="stat-bar-fill bar-atk" style="width:${Math.min(100,effAtk/600*100)}%"></div></div>
+        <span class="stat-bar-val">${effAtk}</span>
+      </div>
+      <div class="stat-bar-row">
+        <span class="stat-bar-label">DEF</span>
+        <div class="stat-bar-track"><div class="stat-bar-fill bar-def" style="width:${Math.min(100,effDef/400*100)}%"></div></div>
+        <span class="stat-bar-val">${effDef}</span>
+      </div>
+    </div>
+    <div class="ability-box">
+      <div class="ability-name">⚡ ${def.ability}</div>
+      <div class="ability-desc">${def.abilityDesc}</div>
+    </div>
+    <div class="modal-row"><span class="modal-label">Power Rating</span><span class="modal-value" style="color:var(--red)">${getTitanPower(entry)}</span></div>
+    ${upgradeInfo ? upgradeInfo.html : '<div class="upgrade-preview">★★★★★ Max Stars!</div>'}
+  `;
+
+  const actions = [];
+  actions.push({
+    label: inTeam ? '✓ Remove from Team' : '⚔️ Add to Battle Team',
+    cls: 'btn-gold',
+    onclick: () => { assignToTeam(titanId); closeModal(); },
+  });
+  if (upgradeInfo) {
+    actions.push({
+      label: upgradeInfo.canUpgrade ? `⬆ Upgrade to ★${entry.stars + 1}` : '❌ Need More Resources',
+      cls: 'btn-purple', disabled: !upgradeInfo.canUpgrade,
+      onclick: () => upgradeTitan(titanId),
+    });
+  }
+
+  showModal(`${def.icon} ${def.name}`, bodyHtml, actions);
+}
+
+// ============================================================
+// SECTION 15: UI HELPERS
+// ============================================================
+
+const RESOURCE_ICONS = { gold: '💰', food: '🌾', crystals: '💎', mana: '⚡' };
+
+function formatCostStr(costs) {
+  return Object.entries(costs).map(([k, v]) => `${RESOURCE_ICONS[k]}${v}`).join(' ');
+}
+
+function formatCostHtml(costs, showAfford) {
+  return `<div class="cost-row">${Object.entries(costs).map(([k, v]) => {
+    const cant = showAfford && state.resources[k] < v;
+    return `<div class="cost-item${cant ? ' cant-afford' : ''}">${RESOURCE_ICONS[k]} ${v}</div>`;
+  }).join('')}</div>`;
+}
+
+// ============================================================
+// SECTION 16: RENDER FUNCTIONS
+// ============================================================
+
+function renderAll() {
+  renderHeader();
+  renderResources();
+  renderKingdomTab();
+  renderTitansTab();
+  renderBattleTab();
+  renderResearchTab();
+}
+
+function renderHeader() {
+  document.getElementById('kingdom-level').textContent = state.kingdom.level;
+  document.getElementById('kingdom-name-display').textContent = `🏰 ${state.kingdom.name}`;
+  const level = state.kingdom.level;
+  const maxLevel = XP_TABLE.length - 1;
+  if (level < maxLevel) {
+    const needed = XP_TABLE[level];
+    const pct = Math.min(100, (state.kingdom.xp / needed) * 100);
+    document.getElementById('xp-bar-fill').style.width = pct + '%';
+    document.getElementById('xp-text').textContent = `${Math.floor(state.kingdom.xp)} / ${needed} XP`;
+  } else {
+    document.getElementById('xp-bar-fill').style.width = '100%';
+    document.getElementById('xp-text').textContent = 'MAX LEVEL';
+  }
+}
+
+function renderResources() {
+  const rates = getResourceRates();
+  const res = state.resources;
+  document.getElementById('r-gold').textContent     = Math.floor(res.gold);
+  document.getElementById('r-food').textContent     = Math.floor(res.food);
+  document.getElementById('r-crystals').textContent = Math.floor(res.crystals);
+  document.getElementById('r-mana').textContent     = Math.floor(res.mana);
+  document.getElementById('rr-gold').textContent     = `+${rates.gold.toFixed(1)}/s`;
+  document.getElementById('rr-food').textContent     = `+${rates.food.toFixed(1)}/s`;
+  document.getElementById('rr-crystals').textContent = `+${rates.crystals.toFixed(1)}/s`;
+  document.getElementById('rr-mana').textContent     = `+${rates.mana.toFixed(1)}/s`;
+}
+
+function renderKingdomTab() {
+  // Castle info
+  document.getElementById('castle-level-display').textContent = state.castle.level;
+  document.getElementById('slots-used').textContent = state.buildings.length;
+  document.getElementById('slots-max').textContent  = getMaxSlots();
+
+  // Buildings grid
+  const grid = document.getElementById('buildings-grid');
+  const maxSlots = getMaxSlots();
+  let html = '';
+  for (let i = 0; i < maxSlots; i++) {
+    const b = state.buildings[i];
+    if (b) {
+      const def = BUILDING_DATA[b.id];
+      const isMax = b.level >= def.maxLevel;
+      let outputLine = '';
+      if (def.output.length) outputLine = `<div class="building-output">${def.output[b.level]}/s ${def.outputType}</div>`;
+      else outputLine = `<div class="building-output" style="color:var(--text-dim)">${def.outputLabel}</div>`;
+      html += `<div class="building-card" onclick="openBuildingDetail('${b.id}')">
+        ${isMax ? '<div class="building-max-badge">MAX</div>' : ''}
+        <div class="building-icon">${def.icon}</div>
+        <div class="building-name">${def.name}</div>
+        <div class="building-level">Level ${b.level}</div>
+        ${outputLine}
+      </div>`;
+    } else {
+      html += `<div class="building-card empty-slot" onclick="openBuildMenu()">
+        <div style="font-size:28px;color:var(--text-dim)">+</div>
+        <div style="font-size:11px;color:var(--text-dim)">Build</div>
+      </div>`;
+    }
+  }
+  grid.innerHTML = html;
+
+  // Troops panel
+  const max = getMaxTroops();
+  const tp = document.getElementById('troops-panel');
+  tp.innerHTML = `
+    <div class="troop-row">
+      <span class="troop-icon">⚔️</span>
+      <div class="troop-info">
+        <div class="troop-name">Soldiers</div>
+        <div class="troop-count">${state.troops.soldiers} / ${max.soldiers}</div>
+      </div>
+      <button class="btn-train" onclick="trainTroops('soldiers')" ${state.troops.soldiers >= max.soldiers ? 'disabled' : ''}>+10 (💰200)</button>
+    </div>
+    <div class="troop-row">
+      <span class="troop-icon">🏹</span>
+      <div class="troop-info">
+        <div class="troop-name">Archers</div>
+        <div class="troop-count">${state.troops.archers} / ${max.archers}</div>
+      </div>
+      <button class="btn-train" onclick="trainTroops('archers')" ${state.troops.archers >= max.archers || !state.buildings.find(b => b.id === 'archery_range') ? 'disabled' : ''}>+10 (💰300)</button>
+    </div>
+    <div class="troop-row">
+      <span class="troop-icon">🔮</span>
+      <div class="troop-info">
+        <div class="troop-name">Mages</div>
+        <div class="troop-count">${state.troops.mages} / ${max.mages}</div>
+      </div>
+      <button class="btn-train" onclick="trainTroops('mages')" ${state.troops.mages >= max.mages || !state.buildings.find(b => b.id === 'mage_tower') ? 'disabled' : ''}>+10 (💰400)</button>
+    </div>`;
+}
+
+function renderTitansTab() {
+  document.getElementById('titan-count').textContent = state.titans.length;
+
+  // Battle team slots
+  const teamSlots = document.getElementById('battle-team-slots');
+  const slots = teamSlots.querySelectorAll('.team-slot');
+  const teamMap = {};
+  for (const t of state.titans) {
+    if (t.teamSlot >= 0) teamMap[t.teamSlot] = t;
+  }
+  for (let i = 0; i < 3; i++) {
+    const slot = slots[i];
+    const entry = teamMap[i];
+    if (entry) {
+      const def = TITAN_DATA[entry.id];
+      slot.className = 'team-slot filled';
+      slot.innerHTML = `<span class="slot-remove" onclick="event.stopPropagation();removeFromTeam('${entry.id}')">✕</span>
+        <div class="slot-titan-icon">${def.icon}</div>
+        <div class="slot-titan-name">${def.name.split(' ')[0]}</div>`;
+    } else {
+      slot.className = 'team-slot empty';
+      slot.innerHTML = '<span class="slot-label">Slot ' + (i + 1) + '</span>';
+    }
+  }
+
+  // Titan cards
+  const grid = document.getElementById('titans-grid');
+  if (state.titans.length === 0) {
+    grid.innerHTML = '<p style="color:var(--text-dim);font-size:13px;padding:20px 0;text-align:center">No titans yet. Summon your first titan!</p>';
+    return;
+  }
+  grid.innerHTML = state.titans.map(entry => {
+    const def = TITAN_DATA[entry.id];
+    const inTeam = entry.teamSlot >= 0;
+    const power  = getTitanPower(entry);
+    const stars  = '★'.repeat(entry.stars) + '☆'.repeat(5 - entry.stars);
+    return `<div class="titan-card ${def.rarity}" onclick="openTitanDetail('${entry.id}')">
+      ${inTeam ? `<div class="titan-team-badge">Team ${entry.teamSlot + 1}</div>` : ''}
+      <div class="titan-icon">${def.icon}</div>
+      <div class="titan-name">${def.name}</div>
+      <div class="titan-rarity">${def.rarity}</div>
+      <div class="titan-stars">${stars}</div>
+      <div class="titan-stats">
+        <div class="titan-stat">⚔️ ${Math.round(TITAN_DATA[entry.id].atk * (1 + (entry.stars-1)*0.2))}</div>
+        <div class="titan-stat">🛡 ${Math.round(TITAN_DATA[entry.id].def * (1 + (entry.stars-1)*0.2))}</div>
+        <div class="titan-stat" style="color:var(--red)">⚡${power}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function removeFromTeam(titanId) {
+  const entry = getTitanEntry(titanId);
+  if (entry) { entry.teamSlot = -1; saveGame(); renderTitansTab(); }
+}
+
+function renderBattleTab() {
+  document.getElementById('player-power-num').textContent = getPlayerPower();
+  const list = document.getElementById('enemies-list');
+  list.innerHTML = ENEMY_DATA.map(e => {
+    const playerPower = getPlayerPower();
+    const winPct = calcWinChance(playerPower, e.power);
+    const winColor = winPct >= 60 ? 'var(--green)' : winPct >= 35 ? '#ff9800' : 'var(--red)';
+    return `<div class="enemy-card" onclick="startBattle('${e.id}')">
+      <span class="enemy-tier tier-${e.tier}">${e.tier}</span>
+      <div class="enemy-icon">${e.icon}</div>
+      <div class="enemy-info">
+        <div class="enemy-name">${e.name}</div>
+        <div class="enemy-power">Power: ${e.power} · Win: <span style="color:${winColor}">${winPct}%</span></div>
+        <div class="enemy-rewards">${e.loot}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderResearchTab() {
+  const grid = document.getElementById('research-grid');
+  grid.innerHTML = RESEARCH_DATA.map(def => {
+    const done = !!state.research[def.id];
+    const costStr = formatCostStr(def.cost);
+    return `<div class="research-card${done ? ' done' : ''}" onclick="${done ? '' : `doResearch('${def.id}')`}">
+      <div class="research-icon">${def.icon}</div>
+      <div class="research-info">
+        <div class="research-name">${def.name}</div>
+        <div class="research-desc">${def.desc}</div>
+        ${done ? '' : `<div class="research-cost">${costStr}</div>`}
+      </div>
+      <div class="research-status ${done ? 'status-done' : 'status-locked'}">${done ? '✓ Done' : 'Research'}</div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// SECTION 17: NAVIGATION
+// ============================================================
+
+let currentTab = 'kingdom';
+
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`tab-${tabName}`).classList.add('active');
+  document.querySelector(`.nav-btn[data-tab="${tabName}"]`).classList.add('active');
+  currentTab = tabName;
+}
+
+// ============================================================
+// SECTION 18: TOAST NOTIFICATIONS
+// ============================================================
+
+function showToast(message, type) {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type || ''}`;
+  toast.textContent = message;
+  container.appendChild(toast);
+  setTimeout(() => { toast.remove(); }, 2800);
+}
+
+// ============================================================
+// SECTION 19: GAME LOOP
+// ============================================================
+
+let saveTimer = 0;
+
+function tick() {
+  generateResources();
+  renderResources();
+  if (currentTab === 'battle') {
+    document.getElementById('player-power-num').textContent = getPlayerPower();
+  }
+  saveTimer++;
+  if (saveTimer >= 30) { saveGame(); saveTimer = 0; } // auto-save every 30s
+}
+
+// ============================================================
+// SECTION 20: INITIALIZATION
+// ============================================================
+
+function init() {
+  if (!loadGame()) {
+    state = defaultState();
+  }
+  renderAll();
+  setInterval(tick, 1000);
+
+  // Welcome toast on first load
+  if (!localStorage.getItem('realm_welcomed')) {
+    setTimeout(() => showToast('Welcome to The Realm! Build your kingdom and collect titans.', 'info'), 800);
+    localStorage.setItem('realm_welcomed', '1');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', init);
