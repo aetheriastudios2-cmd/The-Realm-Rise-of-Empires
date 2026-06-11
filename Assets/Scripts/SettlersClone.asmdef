@@ -1,0 +1,17 @@
+{
+    "name": "SettlersClone",
+    "rootNamespace": "SettlersClone",
+    "references": [
+        "GUID:fc67e8f9da9344e4c8d3cbf8caa4e882",
+        "GUID:27619889b8ba8c24980f49ee34dbb44a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
